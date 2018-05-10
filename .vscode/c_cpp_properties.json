@@ -4,7 +4,8 @@
             "name": "ESP32",
             "includePath": [
                 "${workspaceRoot}",
-                "${IDF_PATH}/components",
+                "E:/dev/esp/esp-idf/components/**",
+                "E:/dev/esp/xtensa-esp32-elf/include",
                 "${XTENSA_ESP32_ELF_PATH}/xtensa-esp32-elf/include"
             ],
             "browse": {
@@ -16,6 +17,9 @@
                     "E:/dev/esp/xtensa-esp32-elf/include"
                 ]
             },
+			"defines": [
+				"CONFIG_LOG_DEFAULT_LEVEL=3"
+			],
             "intelliSenseMode": "clang-x64"
         }
     ],
