@@ -1,0 +1,53 @@
+{
+	"version": "0.1.0",
+    "command": "bash",
+	"args": ["--noprofile","/mnt/e/dev/esp/ltag/bin/esp32_dev.sh"],
+    "isShellCommand": true,
+    "showOutput": "always",
+    "suppressTaskName": true,
+    "options": {
+        "cwd": "${workspaceRoot}",
+        "env": {
+         }
+	},
+    "tasks": [
+        {
+            "taskName": "build app",
+            "args": ["make app"],
+            "problemMatcher": {
+                "owner": "cpp",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^/mnt/e/dev/esp/ltag/(.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            }
+        },
+        {
+            "taskName": "clean",
+            "suppressTaskName": true,
+            "args": ["make app-clean"]
+        },
+        {
+            "taskName": "monitor",
+			"suppressTaskName": true,
+			"args": [
+				"python C:/ESP32-IDK-SDK/esp-idf/tools/idf_monitor.py --port /dev/COM8 --baud 115200 build/Imagine.elf"
+			]
+        },
+        {
+			"taskName": "flash",
+            "isBuildCommand": true,
+            "args": ["make app-flash"]
+        },
+        {
+			"taskName": "menuconfig",
+			"isShellCommand": true,
+            "args": ["make menuconfig"]
+        },
+    ]
+}
