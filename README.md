@@ -1,5 +1,7 @@
-# Hello World Example
+# ltag ESP32 project
 
-Starts a FreeRTOS task to print "Hello World"
+Homebrew lasertag project using an esp32 as the core for the laser pistols.
 
-See the README.md file in the upper level 'examples' directory for more information about examples.
+Very early days. I've got some of the foundational hardware pieces to work using the esp32 ( IR Tx/Rx, OLED display, WS2811 LEDS ), but now its time start to form this all into a single unit. This project will be the first attempt.
+
+
