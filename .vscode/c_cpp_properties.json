@@ -1,20 +1,22 @@
 {
     "configurations": [
         {
-            "name": "ESP32",
+			"name": "ESP32",
+			"forcedInclude": [
+				"${workspaceRoot}/build/include/sdkconfig.h"
+			],
             "includePath": [
                 "${workspaceRoot}",
-                "E:/dev/esp/esp-idf/components/**",
-                "E:/dev/esp/xtensa-esp32-elf/include",
-                "${XTENSA_ESP32_ELF_PATH}/xtensa-esp32-elf/include"
+                "${config:esp32.idf.path}/components/**",
+                "${config:esp32.xtensa.path}/include"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
                     "${workspaceRoot}",
-                    "E:/dev/esp/esp-idf/components",
-                    "E:/dev/esp/xtensa-esp32-elf/include"
+                    "${config:esp32.idf.path}/components",
+                    "${config:esp32.xtensa.path}/include"
                 ]
             },
 			"defines": [
