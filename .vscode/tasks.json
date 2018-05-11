@@ -1,5 +1,6 @@
 {
 	"version": "0.1.0",
+	"runner": "terminal",
     "command": "bash",
 	"args": ["--noprofile","/mnt/e/dev/esp/ltag/bin/esp32_dev.sh"],
     "isShellCommand": true,

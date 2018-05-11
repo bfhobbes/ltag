@@ -7,16 +7,16 @@
 			],
             "includePath": [
                 "${workspaceRoot}",
-                "${config:esp32.idf.path}/components/**",
-                "${config:esp32.xtensa.path}/include"
+                "E:/dev/esp/esp-idf/components/**",
+                "E:/dev/esp/xtensa-esp32-elf/include"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
                     "${workspaceRoot}",
-                    "${config:esp32.idf.path}/components",
-                    "${config:esp32.xtensa.path}/include"
+                    "E:/dev/esp/esp-idf/components",
+                    "E:/dev/esp/xtensa-esp32-elf/include"
                 ]
             },
 			"defines": [

@@ -1,0 +1,15 @@
+menu "ltag"
+
+config LTAG_TX_ENABLE
+    bool "Enable IR TX code"
+    default y
+    help
+        Enables worker that monitors trigger and does shot TX
+
+config LTAG_RX_ENABLE
+    bool "Enable IR RX code"
+    default y
+    help
+        Enables worker that monitors IR RX
+
+endmenu

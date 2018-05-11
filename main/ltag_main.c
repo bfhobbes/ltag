@@ -24,8 +24,8 @@
 
 #include <string.h>
 
-//#define TX_EN 1
-#define RX_EN 1
+#define TX_EN CONFIG_LTAG_TX_ENABLE
+#define RX_EN CONFIG_LTAG_RX_ENABLE
 
 #define RMT_TX_CARRIER_EN    1   /*!< Enable carrier for IR transmitter test with IR led */
 
@@ -257,7 +257,6 @@ static int ltag_ir_rx_init()
 	ESP_ERROR_CHECK(gpio_set_direction(RMT_RX_PIN, GPIO_MODE_INPUT));
     gpio_pullup_en(RMT_RX_PIN);
 
-
     rmt_config_t rmt_rx;
     rmt_rx.channel = RMT_RX_CHANNEL;
     rmt_rx.gpio_num = RMT_RX_PIN;
@@ -384,11 +383,11 @@ void app_main()
 {
     ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
     ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
-#if defined(RX_EN)
+#if RX_EN
     xTaskCreate(ltag_ir_recv_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);
 #endif
 
-#if defined(TX_EN)
+#if TX_EN
     xTaskCreate(rmt_example_nec_tx_task, "rmt_nec_tx_task", 2048, NULL, 10, NULL);
 #endif
 }
