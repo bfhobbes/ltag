@@ -8,16 +8,16 @@
             "includePath": [
                 "${workspaceRoot}/main/**",
                 "${workspaceRoot}/components/**",
-                "E:/dev/esp/esp-idf/components/**",
-                "E:/dev/esp/xtensa-esp32-elf/include"
+                "${IDF_PATH}/components/**",
+                "${XTENSA_PATH}/include"
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
                     "${workspaceRoot}",
-                    "E:/dev/esp/esp-idf/components",
-                    "E:/dev/esp/xtensa-esp32-elf/include"
+                    "${IDF_PATH}/components",
+                    "${XTENSA_PATH}/include"
                 ]
             },
 			"defines": [
