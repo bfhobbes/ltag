@@ -6,8 +6,7 @@
  */
 #include "sdkconfig.h"
 #ifdef CONFIG_U8G2_PRESENT
-#include "U8G2.h"
-#include <u8g2.h>
+#include "U8G2Wrap.h"
 extern "C" {
 #include <u8g2_esp32_hal.h>
 }
