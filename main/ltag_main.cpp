@@ -6,7 +6,10 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+
 #include "RMT.h"
+
+#include "U8G2Wrap.h"
 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -27,6 +30,10 @@
 
 #define TX_EN CONFIG_LTAG_TX_ENABLE
 #define RX_EN CONFIG_LTAG_RX_ENABLE
+
+const gpio_num_t RST_PIN = (gpio_num_t)16;
+const gpio_num_t SDA_PIN = (gpio_num_t)4;
+const gpio_num_t SCL_PIN = (gpio_num_t)15;
 
 #define RMT_TX_CARRIER_EN    1   /*!< Enable carrier for IR transmitter test with IR led */
 
@@ -73,8 +80,26 @@ extern "C" {
 
 void app_main()
 {
+	gpio_pad_select_gpio(RST_PIN);
+	ESP_ERROR_CHECK(gpio_set_direction(RST_PIN, GPIO_MODE_OUTPUT));
+	ESP_ERROR_CHECK(gpio_set_level(RST_PIN, 1));
+
     ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
     ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
+
+	vTaskDelay(1000/portTICK_PERIOD_MS);
+
+	U8G2 disp(SDA_PIN,SCL_PIN,0x3c);
+	disp.initDisplay();
+	disp.setPowerSave(0);
+	disp.setFont(u8g2_font_unifont_t_symbols);
+
+	disp.clearBuffer();
+	disp.drawFrame(0,26,100,6);
+	disp.drawUTF8(0,20,"Monkey Magic");
+	disp.sendBuffer();
+
+	vTaskDelay(1000/portTICK_PERIOD_MS);
 
 // #if RX_EN
 //     xTaskCreate(ltag_ir_recv_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);

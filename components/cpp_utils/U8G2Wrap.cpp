@@ -17,12 +17,12 @@ U8G2::U8G2(gpio_num_t sda, gpio_num_t scl, int address) {
 	u8g2_esp32_hal.scl = scl;
 	u8g2_esp32_hal_init(u8g2_esp32_hal);
 
-	u8g2_Setup_ssd1306_128x32_univision_f(
+	u8g2_Setup_ssd1306_i2c_128x64_noname_f(
 		&m_u8g2,
 		U8G2_R0,
 		//u8x8_byte_sw_i2c,
-		u8g2_esp32_msg_i2c_cb,
-		u8g2_esp32_msg_i2c_and_delay_cb);  // init u8g2 structure
+		u8g2_esp32_i2c_byte_cb,
+		u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
 	u8x8_SetI2CAddress(&m_u8g2.u8x8,address << 1);
 }
 
