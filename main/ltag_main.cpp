@@ -9,7 +9,8 @@
 
 #include "RMT.h"
 
-#include "U8G2Wrap.h"
+#include "esp32helper/U8G2.h"
+#include "esp32helper/GPIO.h"
 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -28,12 +29,15 @@
 
 #include <string.h>
 
+using namespace esp32helper;
+
 #define TX_EN CONFIG_LTAG_TX_ENABLE
 #define RX_EN CONFIG_LTAG_RX_ENABLE
 
 const gpio_num_t RST_PIN = (gpio_num_t)16;
 const gpio_num_t SDA_PIN = (gpio_num_t)4;
 const gpio_num_t SCL_PIN = (gpio_num_t)15;
+const gpio_num_t TRIGGER_PIN = (gpio_num_t)21;
 
 #define RMT_TX_CARRIER_EN    1   /*!< Enable carrier for IR transmitter test with IR led */
 
@@ -80,6 +84,14 @@ extern "C" {
 
 void app_main()
 {
+	// Gpio::setInput(TRIGGER_PIN);
+	// Gpio::setInterruptType(TRIGGER_PIN, GPIO_INTR_POSEDGE);
+	// Gpio::setPullMode(TRIGGER_PIN,);
+	// Gpio::addISRHandler(TRIGGER_PIN, xxx, NULL);
+	// Gpio::interruptEnable(TRIGGER_PIN);
+
+	// gpio_isr_handle_t
+
 	gpio_pad_select_gpio(RST_PIN);
 	ESP_ERROR_CHECK(gpio_set_direction(RST_PIN, GPIO_MODE_OUTPUT));
 	ESP_ERROR_CHECK(gpio_set_level(RST_PIN, 1));
@@ -87,16 +99,14 @@ void app_main()
     ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
     ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
 
-	vTaskDelay(1000/portTICK_PERIOD_MS);
-
-	U8G2 disp(SDA_PIN,SCL_PIN,0x3c);
+	U8g2 disp(SDA_PIN, SCL_PIN, 0x3c);
 	disp.initDisplay();
 	disp.setPowerSave(0);
 	disp.setFont(u8g2_font_unifont_t_symbols);
 
 	disp.clearBuffer();
 	disp.drawFrame(0,26,100,6);
-	disp.drawUTF8(0,20,"Monkey Magic");
+	disp.drawUTF8(0,20,"Monkey Magic2");
 	disp.sendBuffer();
 
 	vTaskDelay(1000/portTICK_PERIOD_MS);
