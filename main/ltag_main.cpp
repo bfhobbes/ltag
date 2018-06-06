@@ -7,10 +7,10 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 
-#include "RMT.h"
-
-#include "esp32helper/U8G2.h"
-#include "esp32helper/GPIO.h"
+#include "esp32helper/Rmt.h"
+#include "esp32helper/U8g2.h"
+#include "esp32helper/Gpio.h"
+#include "esp32helper/FreeRtos.h"
 
 #include <stdio.h>
 #include "freertos/FreeRTOS.h"
@@ -78,17 +78,35 @@ const gpio_num_t TRIGGER_PIN = (gpio_num_t)21;
 static const char *TAG = "ltag";
 static const char *NEC_TAG = "nec_tag";
 
+static QueueHandle_t q1;
+
 extern "C" {
 	void app_main(void);
 }
 
+const uint32_t cDebounceTime = 1000;
+static uint32_t g_LastTime = 0;
+
+void IRAM_ATTR isrRoutine(void *val) {
+	uint32_t timeNow = FreeRtos::getTimeSinceStart();
+	if(timeNow-g_LastTime > cDebounceTime) {
+		gpio_num_t pin(TRIGGER_PIN);
+		xQueueSendToBackFromISR(q1, &pin, NULL);
+		g_LastTime = timeNow;
+	}
+}
+
 void app_main()
 {
-	// Gpio::setInput(TRIGGER_PIN);
-	// Gpio::setInterruptType(TRIGGER_PIN, GPIO_INTR_POSEDGE);
-	// Gpio::setPullMode(TRIGGER_PIN,);
-	// Gpio::addISRHandler(TRIGGER_PIN, xxx, NULL);
-	// Gpio::interruptEnable(TRIGGER_PIN);
+	esp32helper::Rmt *rmt = new Rmt(RMT_TX_PIN);
+
+	q1 = xQueueCreate(10, sizeof(gpio_num_t));
+	Gpio::setInput(TRIGGER_PIN);
+	Gpio::setInterruptType(TRIGGER_PIN, GPIO_INTR_POSEDGE);
+	Gpio::setPullDown(TRIGGER_PIN);
+	Gpio::addISRHandler(TRIGGER_PIN, isrRoutine, NULL);
+	Gpio::interruptEnable(TRIGGER_PIN);
+	//Gpio::interruptDisable(TRIGGER_PIN);
 
 	// gpio_isr_handle_t
 
@@ -106,10 +124,17 @@ void app_main()
 
 	disp.clearBuffer();
 	disp.drawFrame(0,26,100,6);
-	disp.drawUTF8(0,20,"Monkey Magic2");
+	disp.drawUTF8(0,20,"...Monkey...");
 	disp.sendBuffer();
 
-	vTaskDelay(1000/portTICK_PERIOD_MS);
+	while(1) {
+		ESP_LOGI(TAG, "Waiting on interrupt queue");
+		gpio_num_t pin;
+		BaseType_t rc = xQueueReceive(q1, &pin, portMAX_DELAY);
+		ESP_LOGI(TAG, "Woke from interrupt queue wait: %d - %d", rc, pin);
+	}
+	vTaskDelete(NULL);
+
 
 // #if RX_EN
 //     xTaskCreate(ltag_ir_recv_task, "rmt_nec_rx_task", 2048, NULL, 10, NULL);

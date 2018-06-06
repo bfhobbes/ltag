@@ -44,6 +44,9 @@ namespace esp32helper
 		static void setOutput(gpio_num_t pin);
 		static void write(gpio_num_t pin, bool value);
 		static void writeByte(gpio_num_t pins[], uint8_t value, int bits);
+		static void setPullUp(gpio_num_t pin);
+		static void setPullDown(gpio_num_t pin);
+		static void setFloating(gpio_num_t pin);
 	}; // End GPIO
 } // End esp32helper namespace
 

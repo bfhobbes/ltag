@@ -214,3 +214,27 @@ void Gpio::writeByte(gpio_num_t pins[], uint8_t value, int bits) {
 	}
 	ESP_LOGD(LOG_TAG, "<< writeByte");
 } // writeByte
+
+/**
+ * @brief Set enable GPIO pin's internal pull up
+ * @param [in] pin Gpio pin to change
+ */
+void Gpio::setPullUp(gpio_num_t pin) {
+	::gpio_set_pull_mode(pin, GPIO_PULLUP_ONLY);
+}
+
+/**
+ * @brief Set enable GPIO pin's internal pull down
+ * @param [in] pin Gpio pin to change
+ */
+void Gpio::setPullDown(gpio_num_t pin) {
+	::gpio_set_pull_mode(pin, GPIO_PULLDOWN_ONLY);
+}
+
+/**
+ * @brief Set GPIO pin to floatin
+ * @param [in] pin Gpio pin to change
+ */
+void Gpio::setFloating(gpio_num_t pin) {
+	::gpio_set_pull_mode(pin, GPIO_FLOATING);
+}
