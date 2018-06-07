@@ -6,7 +6,6 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-
 #include "esp32helper/Rmt.h"
 #include "esp32helper/U8g2.h"
 #include "esp32helper/Gpio.h"
@@ -29,6 +28,8 @@
 
 #include <string.h>
 
+#include "sdkconfig.h"
+
 using namespace esp32helper;
 
 #define TX_EN CONFIG_LTAG_TX_ENABLE
@@ -45,8 +46,14 @@ const gpio_num_t TRIGGER_PIN = (gpio_num_t)21;
 #define I2C0_SDA_PIN 4
 #define I2C0_SCL_PIN 15
 #define OLED_RST_PIN 16
-#define RMT_RX_PIN 17
-#define RMT_TX_PIN 21
+
+#if defined(CONFIG_LTAG_RX_ENABLE)
+#	define RMT_RX_PIN CONFIG_LTAG_RX_PIN
+#endif
+
+#if defined(CONFIG_LTAG_TX_ENABLE)
+#	define RMT_TX_PIN (gpio_num_t)CONFIG_LTAG_TX_PIN
+#endif
 
 // Channels
 #define RMT_TX_CHANNEL 0
@@ -117,15 +124,15 @@ void app_main()
     ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
     ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
 
-	U8g2 disp(SDA_PIN, SCL_PIN, 0x3c);
-	disp.initDisplay();
-	disp.setPowerSave(0);
-	disp.setFont(u8g2_font_unifont_t_symbols);
+	// U8g2 disp(SDA_PIN, SCL_PIN, 0x3c);
+	// disp.initDisplay();
+	// disp.setPowerSave(0);
+	// disp.setFont(u8g2_font_unifont_t_symbols);
 
-	disp.clearBuffer();
-	disp.drawFrame(0,26,100,6);
-	disp.drawUTF8(0,20,"...Monkey...");
-	disp.sendBuffer();
+	// disp.clearBuffer();
+	// disp.drawFrame(0,26,100,6);
+	// disp.drawUTF8(0,20,"...Monkey...");
+	// disp.sendBuffer();
 
 	while(1) {
 		ESP_LOGI(TAG, "Waiting on interrupt queue");
