@@ -26,12 +26,12 @@ Rmt::Rmt(gpio_num_t pin, rmt_channel_t channel) {
 	config.channel                   = channel;
 	config.gpio_num                  = pin;
 	config.mem_block_num             = 8-this->channel;
-	config.clk_div                   = 8;
+	config.clk_div                   = 80;
 	config.tx_config.loop_en         = 0;
-	config.tx_config.carrier_en      = 0;
+	config.tx_config.carrier_en      = 1;
 	config.tx_config.idle_output_en  = 1;
 	config.tx_config.idle_level      = (rmt_idle_level_t)0;
-	config.tx_config.carrier_freq_hz = 10000;
+	config.tx_config.carrier_freq_hz = 36000;
 	config.tx_config.carrier_level   = (rmt_carrier_level_t)1;
 	config.tx_config.carrier_duty_percent = 50;
 

@@ -6,6 +6,8 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
+#include "Shooter.h"
+
 #include "esp32helper/Rmt.h"
 #include "esp32helper/U8g2.h"
 #include "esp32helper/Gpio.h"
@@ -105,8 +107,6 @@ void IRAM_ATTR isrRoutine(void *val) {
 
 void app_main()
 {
-	esp32helper::Rmt *rmt = new Rmt(RMT_TX_PIN);
-
 	q1 = xQueueCreate(10, sizeof(gpio_num_t));
 	Gpio::setInput(TRIGGER_PIN);
 	Gpio::setInterruptType(TRIGGER_PIN, GPIO_INTR_POSEDGE);
@@ -124,6 +124,9 @@ void app_main()
     ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
     ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
 
+	ShooterTask *shooter = new ShooterTask();
+	shooter->start(q1);
+
 	// U8g2 disp(SDA_PIN, SCL_PIN, 0x3c);
 	// disp.initDisplay();
 	// disp.setPowerSave(0);
@@ -135,10 +138,7 @@ void app_main()
 	// disp.sendBuffer();
 
 	while(1) {
-		ESP_LOGI(TAG, "Waiting on interrupt queue");
-		gpio_num_t pin;
-		BaseType_t rc = xQueueReceive(q1, &pin, portMAX_DELAY);
-		ESP_LOGI(TAG, "Woke from interrupt queue wait: %d - %d", rc, pin);
+		Task::delay(1000);
 	}
 	vTaskDelete(NULL);
 
