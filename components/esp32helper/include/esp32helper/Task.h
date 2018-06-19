@@ -44,6 +44,9 @@ public:
 	void setCore(BaseType_t coreId);
 	void start(void* taskData=nullptr);
 	void stop();
+	static void delay(int ms);
+
+protected:
 	/**
 	 * @brief Body of the task to execute.
 	 *
@@ -54,7 +57,6 @@ public:
 	 * @param [in] data The data passed in to the newly started task.
 	 */
 	virtual void run(void *data) = 0; // Make run pure virtual
-	static void delay(int ms);
 
 private:
 	xTaskHandle m_handle;

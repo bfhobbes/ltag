@@ -1,13 +1,20 @@
 #pragma once
 #include "esp32helper/Task.h"
-#include "esp32helper/Rmt.h"
+
+#include <driver/rmt.h>
+
 
 class ShooterTask : public esp32helper::Task {
 public:
-	ShooterTask();
+	ShooterTask(gpio_num_t pin, rmt_channel_t chan);
+
+	void queueShot();
+
+protected:
 	virtual void run(void *data);
 
 private:
-	esp32helper::Rmt *m_Rmt;;
-
+	gpio_num_t m_Pin;
+	rmt_channel_t m_RmtChannel;
+	QueueHandle_t m_ShotQueue;
 };

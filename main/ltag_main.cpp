@@ -83,11 +83,7 @@ const gpio_num_t TRIGGER_PIN = (gpio_num_t)21;
 #define NEC_DATA_ITEM_NUM   34  /*!< NEC code item number: header + 32bit data + end */
 #define RMT_TX_DATA_NUM  100    /*!< NEC tx test data number */
 
-
 static const char *TAG = "ltag";
-static const char *NEC_TAG = "nec_tag";
-
-static QueueHandle_t q1;
 
 extern "C" {
 	void app_main(void);
@@ -95,19 +91,25 @@ extern "C" {
 
 const uint32_t cDebounceTime = 1000;
 static uint32_t g_LastTime = 0;
+static ShooterTask *g_Shooter = NULL;
 
 void IRAM_ATTR isrRoutine(void *val) {
 	uint32_t timeNow = FreeRtos::getTimeSinceStart();
 	if(timeNow-g_LastTime > cDebounceTime) {
-		gpio_num_t pin(TRIGGER_PIN);
-		xQueueSendToBackFromISR(q1, &pin, NULL);
+		g_Shooter->queueShot();
+
 		g_LastTime = timeNow;
 	}
 }
 
 void app_main()
 {
-	q1 = xQueueCreate(10, sizeof(gpio_num_t));
+    ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
+    ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
+
+	g_Shooter = new ShooterTask((gpio_num_t)CONFIG_LTAG_TX_PIN, RMT_CHANNEL_0);
+
+	// Setup Trigger pin and wire it up to isr routine to queue a shot
 	Gpio::setInput(TRIGGER_PIN);
 	Gpio::setInterruptType(TRIGGER_PIN, GPIO_INTR_POSEDGE);
 	Gpio::setPullDown(TRIGGER_PIN);
@@ -117,16 +119,12 @@ void app_main()
 
 	// gpio_isr_handle_t
 
-	gpio_pad_select_gpio(RST_PIN);
-	ESP_ERROR_CHECK(gpio_set_direction(RST_PIN, GPIO_MODE_OUTPUT));
-	ESP_ERROR_CHECK(gpio_set_level(RST_PIN, 1));
+	// Reset the OLED display
+	// gpio_pad_select_gpio(RST_PIN);
+	// ESP_ERROR_CHECK(gpio_set_direction(RST_PIN, GPIO_MODE_OUTPUT));
+	// ESP_ERROR_CHECK(gpio_set_level(RST_PIN, 1));
 
-    ESP_LOGI(TAG, "TICKS PER 10uSec %d", RMT_TICK_10_US);
-    ESP_LOGI(TAG, "APB_CLK_FREQ %d", APB_CLK_FREQ);
-
-	ShooterTask *shooter = new ShooterTask();
-	shooter->start(q1);
-
+	// OLED display : TODO
 	// U8g2 disp(SDA_PIN, SCL_PIN, 0x3c);
 	// disp.initDisplay();
 	// disp.setPowerSave(0);
