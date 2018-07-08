@@ -6,6 +6,7 @@
 				"${workspaceRoot}/build/include/sdkconfig.h"
 			],
             "includePath": [
+				"${workspaceRoot}/build/include/**",
                 "${workspaceRoot}/main/**",
                 "${workspaceRoot}/components/**",
                 "${IDF_PATH}/components/**",
@@ -15,6 +16,7 @@
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": "",
                 "path": [
+					"${workspaceRoot}/build/include/**",
                     "${workspaceRoot}",
                     "${IDF_PATH}/components",
                     "${XTENSA_PATH}/include"

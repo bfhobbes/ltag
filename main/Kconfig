@@ -8,7 +8,7 @@ config LTAG_TX_ENABLE
 
 config LTAG_TX_PIN
 	int "GPIO Pin for laser TX"
-	default 21
+	default 22
 	depends on LTAG_TX_ENABLE
 	help
 		The GPIO pin number for the LED Transmitter
@@ -18,5 +18,19 @@ config LTAG_RX_ENABLE
     default y
     help
         Enables worker that monitors IR RX
+
+config LTAG_RX_PIN
+	int "GPIO Pin for IR receiver"
+	default 19
+	depends on LTAG_RX_ENABLE
+	help
+		The GPIO pin number for the LED Receiver
+
+config LTAG_TRIGGER_PIN
+	int "GPIO Pin for trigger"
+	default 21
+	help
+		The GPIO pin number for the firing trigger
+
 
 endmenu

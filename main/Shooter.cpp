@@ -48,12 +48,10 @@ ShooterTask::ShooterTask(gpio_num_t pin, rmt_channel_t chan)
 }
 
 void ShooterTask::run(void *data) {
-	QueueHandle_t q1 = static_cast<QueueHandle_t>(data);
-
 	while(1) {
 		ESP_LOGI(TAG, "Waiting on Trigger queue");
 		gpio_num_t pin;
-		BaseType_t rc = xQueueReceive(q1, &pin, portMAX_DELAY);
+		BaseType_t rc = xQueueReceive(m_ShotQueue, &pin, portMAX_DELAY);
 		ESP_LOGI(TAG, "Shooter Woke from interrupt queue wait: %d - %d", rc, pin);
 
 		// TX header and 14 bits which is 15 hi/lo rmt_item32_t's
