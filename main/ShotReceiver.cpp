@@ -1,4 +1,4 @@
-#include "RxTask.h"
+#include "ShotReceiver.h"
 
 #include <esp_log.h>
 
@@ -117,7 +117,7 @@ namespace {
 	}
 }
 
-RxTask::RxTask(gpio_num_t pin, rmt_channel_t chan)
+ShotReceiver::ShotReceiver(gpio_num_t pin, rmt_channel_t chan)
 	// : Task("Receiver")
 	: m_Pin(pin)
 	, m_RmtChannel(chan)
@@ -141,7 +141,7 @@ RxTask::RxTask(gpio_num_t pin, rmt_channel_t chan)
     ESP_ERROR_CHECK(rmt_rx_start(m_RmtChannel, 1));
 }
 
-void RxTask::update(void)
+void ShotReceiver::update(void)
 {
 	size_t rx_size = 0;
 	//try to receive data from ringbuffer.

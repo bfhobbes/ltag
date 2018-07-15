@@ -4,10 +4,10 @@
 
 #include <driver/rmt.h>
 
-class RxTask // : public esp32helper::Task
+class ShotReceiver // : public esp32helper::Task
 {
 public:
-	RxTask(gpio_num_t pin, rmt_channel_t chan);
+	ShotReceiver(gpio_num_t pin, rmt_channel_t chan);
 
 	void update();
 protected:

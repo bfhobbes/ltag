@@ -4,9 +4,9 @@
 #include <driver/rmt.h>
 
 
-class ShooterTask : public esp32helper::Task {
+class ShotTransmitterTask : public esp32helper::Task {
 public:
-	ShooterTask(gpio_num_t pin, rmt_channel_t chan);
+	ShotTransmitterTask(gpio_num_t pin, rmt_channel_t chan);
 
 	void queueShot();
 

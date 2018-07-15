@@ -6,8 +6,8 @@
    software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
    CONDITIONS OF ANY KIND, either express or implied.
 */
-#include "Shooter.h"
-#include "RxTask.h"
+#include "ShotTransmitterTask.h"
+#include "ShotReceiver.h"
 
 #include "esp32helper/Rmt.h"
 #include "esp32helper/U8g2.h"
@@ -40,17 +40,17 @@ using namespace esp32helper;
 // const gpio_num_t SCL_PIN = (gpio_num_t)15;
 // const gpio_num_t TRIGGER_PIN = (gpio_num_t)21;
 
-static const char *TAG = "ltag";
+// static const char *TAG = "ltag";
 
 extern "C" {
 	void app_main(void);
 }
 
 const gpio_num_t cTriggerPin = (gpio_num_t)CONFIG_LTAG_TRIGGER_PIN;
-const uint32_t cDebounceTime = 1000;
+const uint32_t cDebounceTime = 50;
 
-static ShooterTask *g_Shooter = NULL;
-static RxTask *g_Receiver;
+static ShotTransmitterTask *g_Shooter = NULL;
+static ShotReceiver *g_Receiver;
 
 static uint32_t g_LastTime = 0;
 void IRAM_ATTR isrRoutine(void *val) {
@@ -64,8 +64,8 @@ void IRAM_ATTR isrRoutine(void *val) {
 
 void app_main()
 {
-	g_Shooter = new ShooterTask((gpio_num_t)CONFIG_LTAG_TX_PIN, RMT_CHANNEL_0);
-	g_Receiver = new RxTask((gpio_num_t)CONFIG_LTAG_RX_PIN, RMT_CHANNEL_1);
+	g_Shooter = new ShotTransmitterTask((gpio_num_t)CONFIG_LTAG_TX_PIN, RMT_CHANNEL_0);
+	g_Receiver = new ShotReceiver((gpio_num_t)CONFIG_LTAG_RX_PIN, RMT_CHANNEL_1);
 
 	g_Shooter->start();
 	// g_Receiver->start();

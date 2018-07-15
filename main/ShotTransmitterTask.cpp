@@ -1,4 +1,4 @@
-#include "Shooter.h"
+#include "ShotTransmitterTask.h"
 
 // #include "esp32helper/U8g2.h"
 // #include "esp32helper/Gpio.h"
@@ -22,7 +22,7 @@ using namespace esp32helper;
 #	define RMT_TX_PIN (gpio_num_t)CONFIG_LTAG_TX_PIN
 #endif
 
-ShooterTask::ShooterTask(gpio_num_t pin, rmt_channel_t chan)
+ShotTransmitterTask::ShotTransmitterTask(gpio_num_t pin, rmt_channel_t chan)
 : Task("Shooter")
 , m_Pin(pin)
 , m_RmtChannel(chan)
@@ -47,7 +47,7 @@ ShooterTask::ShooterTask(gpio_num_t pin, rmt_channel_t chan)
 	ESP_ERROR_CHECK(rmt_driver_install(chan, 0, 0));
 }
 
-void ShooterTask::run(void *data) {
+void ShotTransmitterTask::run(void *data) {
 	while(1) {
 		ESP_LOGI(TAG, "Waiting on Trigger queue");
 		gpio_num_t pin;
@@ -103,7 +103,7 @@ void ShooterTask::run(void *data) {
 	}
 }
 
-void ShooterTask::queueShot() {
+void ShotTransmitterTask::queueShot() {
 	gpio_num_t pin((gpio_num_t)20);
 	xQueueSendToBackFromISR(m_ShotQueue, &pin, NULL);
 }
