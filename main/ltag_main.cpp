@@ -68,7 +68,7 @@ void app_main()
 	g_Receiver = new RxTask((gpio_num_t)CONFIG_LTAG_RX_PIN, RMT_CHANNEL_1);
 
 	g_Shooter->start();
-	g_Receiver->start();
+	// g_Receiver->start();
 
 	// Setup Trigger pin and wire it up to isr routine to queue a shot
 	Gpio::setInput(cTriggerPin);
@@ -97,7 +97,8 @@ void app_main()
 	// disp.sendBuffer();
 
 	while(1) {
-		Task::delay(1000);
+		g_Receiver->update();
+		Task::delay(50);
 	}
 	vTaskDelete(NULL);
 

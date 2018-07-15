@@ -118,9 +118,10 @@ namespace {
 }
 
 RxTask::RxTask(gpio_num_t pin, rmt_channel_t chan)
-	: Task("Receiver")
-	, m_Pin(pin)
+	// : Task("Receiver")
+	: m_Pin(pin)
 	, m_RmtChannel(chan)
+	, m_RmtRingBuffer(NULL)
 {
 	rmt_config_t config;
 	config.rmt_mode                  = RMT_MODE_RX;
@@ -134,42 +135,37 @@ RxTask::RxTask(gpio_num_t pin, rmt_channel_t chan)
 
 	ESP_ERROR_CHECK(rmt_config(&config));
 	ESP_ERROR_CHECK(rmt_driver_install(chan, 1000, 0)); // 1000 == rx buffer size
+
+    //get RMT RX ringbuffer
+	ESP_ERROR_CHECK(rmt_get_ringbuf_handle(m_RmtChannel, &m_RmtRingBuffer));
+    ESP_ERROR_CHECK(rmt_rx_start(m_RmtChannel, 1));
 }
 
-void RxTask::run(void *data)
+void RxTask::update(void)
 {
-    RingbufHandle_t rb = NULL;
-    //get RMT RX ringbuffer
-    rmt_get_ringbuf_handle(m_RmtChannel, &rb);
-    rmt_rx_start(m_RmtChannel, 1);
-    while(rb) {
-		//ESP_LOGI(TAG, "RingBuffer Loop");
+	size_t rx_size = 0;
+	//try to receive data from ringbuffer.
+	//RMT driver will push all the data it receives to its ringbuffer.
+	//We just need to parse the value and return the spaces of ringbuffer.
+	void *buff = xRingbufferReceive(m_RmtRingBuffer, &rx_size, 0);
+	if(NULL != buff) {
+		ESP_LOGI(TAG, "RECEIVE BUFFER!!!");
+		rmt_item32_t* item = (rmt_item32_t*)buff;
+		rmt_item32_t *pEnd = item + (rx_size/sizeof(rmt_item32_t));
+		uint8_t data[4];
+		int dataSize = 4;
 
-        size_t rx_size = 0;
-        //try to receive data from ringbuffer.
-        //RMT driver will push all the data it receives to its ringbuffer.
-        //We just need to parse the value and return the spaces of ringbuffer.
-        void *buff = xRingbufferReceive(rb, &rx_size, 0);
-        if(NULL != buff) {
-			rmt_item32_t* item = (rmt_item32_t*)buff;
-			ESP_LOGI(TAG, "Ringbuffer received!!!");
-			rmt_item32_t *pEnd = item + (rx_size/sizeof(rmt_item32_t));
-			uint8_t data[4];
-			int dataSize = 4;
-
-			while(item != pEnd) {
-				dataSize = 4;
-				item = decode_message(item, pEnd, data, &dataSize );
-				if(dataSize>0) {
-					ESP_LOGI(TAG, "Recieved message size=%d", dataSize );
-					// Something was decoded
-					// for(int i=0; i<dataSize; ++i) {
-					// 	ESP_LOGI(TAG, "Recieved message Byte %d/%d = 0x%x", i, dataSize, data[i] );
-					// }
-				}
+		while(item != pEnd) {
+			dataSize = 4;
+			item = decode_message(item, pEnd, data, &dataSize );
+			if(dataSize>0) {
+				ESP_LOGI(TAG, "Recieved message size=%d", dataSize );
+				// Something was decoded
+				// for(int i=0; i<dataSize; ++i) {
+				// 	ESP_LOGI(TAG, "Recieved message Byte %d/%d = 0x%x", i, dataSize, data[i] );
+				// }
 			}
-			vRingbufferReturnItem(rb, buff);
 		}
-		this->delay(500);
+		vRingbufferReturnItem(m_RmtRingBuffer, buff);
 	}
 }
